@@ -42,10 +42,10 @@ class GlobalConfigController : Initializable {
     private var config: Config
         get() {
             return Config(
-                    sourceChatId.text.toLong(),
-                    targetChatId.text.toLong(),
+                    readLongField(sourceChatId),
+                    readLongField(targetChatId),
                     botToken.text,
-                    logsChatId.text.toLong(),
+                    readLongField(logsChatId),
                     databaseConfig = DatabaseConfig(
                             dbUrl.text,
                             dbDriver.text,
@@ -54,7 +54,7 @@ class GlobalConfigController : Initializable {
                     ),
                     proxy = ProxySettings(
                             proxyHost.text,
-                            proxyPort.text.toInt(),
+                            readIntField(proxyPort),
                             proxyUsername.text,
                             proxyPassword.text
                     )
@@ -62,80 +62,81 @@ class GlobalConfigController : Initializable {
             )
         }
         set(value) {
-            sourceChatId.text = value.sourceChatId.toString()
-            targetChatId.text = value.targetChatId.toString()
-            logsChatId.text = value.logsChatId.toString()
-            botToken.text = value.botToken
+            try {
+                sourceChatId.text = value.sourceChatId.toString()
+                targetChatId.text = value.targetChatId.toString()
+                logsChatId.text = value.logsChatId.toString()
+                botToken.text = value.botToken
 
-            dbUrl.text = value.databaseConfig?.url
-            dbDriver.text = value.databaseConfig?.driver
-            dbUsername.text = value.databaseConfig?.username
-            dbPassword.text = value.databaseConfig?.password
+                dbUrl.text = value.databaseConfig?.url
+                dbDriver.text = value.databaseConfig?.driver
+                dbUsername.text = value.databaseConfig?.username
+                dbPassword.text = value.databaseConfig?.password
 
-            proxyHost.text = value.proxy?.host
-            proxyPort.text = value.proxy?.port.toString()
-            proxyUsername.text = value.proxy?.username
-            proxyPassword.text = value.proxy?.password
+                proxyHost.text = value.proxy?.host
+                proxyPort.text = value.proxy?.port.toString()
+                proxyUsername.text = value.proxy?.username
+                proxyPassword.text = value.proxy?.password
+            }
+            catch (e: Exception) {
+
+            }
         }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        openButton.onAction = EventHandler {
-            val filechooser = FileChooser()
-            filechooser.title = "Open configuration file"
-            val file = filechooser.showOpenDialog(stage)
-            val content = file?.readText()
-            config = if(content != null) {
-                content.toObject(Config::class.java)
-            } else throw Exception()
-        }
-
-        saveButton.onAction = EventHandler {
-            val c = config
-            val fileChooser = FileChooser()
-            fileChooser.title = "Save configuration file"
-            val file = fileChooser.showSaveDialog(stage)
-            file.writeText(c.toJson())
-        }
         println("Initialized")
-    }
-
-    private fun updateView() {
-        sourceChatId.text = config.sourceChatId.toString()
-        targetChatId.text = config.targetChatId.toString()
-        logsChatId.text = config.logsChatId.toString()
-        botToken.text = config.botToken
-
-        dbUrl.text = config.databaseConfig?.url
-        dbDriver.text = config.databaseConfig?.driver
-        dbUsername.text = config.databaseConfig?.username
-        dbPassword.text = config.databaseConfig?.password
-
-        proxyHost.text = config.proxy?.host
-        proxyPort.text = config.proxy?.port.toString()
-        proxyUsername.text = config.proxy?.username
-        proxyPassword.text=  config.proxy?.password
-    }
-
-    private fun viewToConfig() {
         config = Config(
-                sourceChatId.text.toLong(),
-                targetChatId.text.toLong(),
-                botToken.text,
-                logsChatId.text.toLong(),
-                databaseConfig = DatabaseConfig(
-                        dbUrl.text,
-                        dbDriver.text,
-                        dbUsername.text,
-                        dbPassword.text
-                ),
-                proxy = ProxySettings(
-                        proxyHost.text,
-                        proxyPort.text.toInt(),
-                        proxyUsername.text,
-                        proxyPassword.text
-                )
-
+                0,
+                0,
+                ""
         )
+    }
+
+    @FXML
+    private fun onOpen() {
+        val filechooser = FileChooser()
+        filechooser.title = "Open configuration file"
+        val file = filechooser.showOpenDialog(stage)
+        val content = file?.readText()
+        config = if(content != null) {
+            content.toObject(Config::class.java)
+        } else {
+            Config(
+                    0,
+                    0,
+                    ""
+            )
+            //throw Exception()
+        }
+    }
+
+    @FXML
+    private fun onSave() {
+        val c = config
+        val fileChooser = FileChooser()
+        fileChooser.title = "Save configuration file"
+        val file = fileChooser.showSaveDialog(stage)
+        file.writeText(c.toJson())
+    }
+
+    private fun readLongField(field: TextField) {
+        try {
+            val result = field.text.toLong()
+            return result
+        }
+        catch (e: Exception) {
+
+        }
+    }
+
+    private fun readIntField(field: TextField) {
+        try {
+            val result = field.text.toInt()
+            return result
+        }
+        catch (e: Exception) {
+
+        }
     }
 
 }
