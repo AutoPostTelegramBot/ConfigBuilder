@@ -39,7 +39,44 @@ class GlobalConfigController : Initializable {
 
     lateinit var stage: Stage
 
-    private lateinit var config: Config
+    private var config: Config
+        get() {
+            return Config(
+                    sourceChatId.text.toLong(),
+                    targetChatId.text.toLong(),
+                    botToken.text,
+                    logsChatId.text.toLong(),
+                    databaseConfig = DatabaseConfig(
+                            dbUrl.text,
+                            dbDriver.text,
+                            dbUsername.text,
+                            dbPassword.text
+                    ),
+                    proxy = ProxySettings(
+                            proxyHost.text,
+                            proxyPort.text.toInt(),
+                            proxyUsername.text,
+                            proxyPassword.text
+                    )
+
+            )
+        }
+        set(value) {
+            sourceChatId.text = value.sourceChatId.toString()
+            targetChatId.text = value.targetChatId.toString()
+            logsChatId.text = value.logsChatId.toString()
+            botToken.text = value.botToken
+
+            dbUrl.text = value.databaseConfig?.url
+            dbDriver.text = value.databaseConfig?.driver
+            dbUsername.text = value.databaseConfig?.username
+            dbPassword.text = value.databaseConfig?.password
+
+            proxyHost.text = value.proxy?.host
+            proxyPort.text = value.proxy?.port.toString()
+            proxyUsername.text = value.proxy?.username
+            proxyPassword.text = value.proxy?.password
+        }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         openButton.onAction = EventHandler {
@@ -50,15 +87,14 @@ class GlobalConfigController : Initializable {
             config = if(content != null) {
                 content.toObject(Config::class.java)
             } else throw Exception()
-            updateView()
         }
 
         saveButton.onAction = EventHandler {
-            viewToConfig()
+            val c = config
             val fileChooser = FileChooser()
             fileChooser.title = "Save configuration file"
             val file = fileChooser.showSaveDialog(stage)
-            file.writeText(config.toJson())
+            file.writeText(c.toJson())
         }
         println("Initialized")
     }
@@ -101,4 +137,5 @@ class GlobalConfigController : Initializable {
 
         )
     }
+
 }
