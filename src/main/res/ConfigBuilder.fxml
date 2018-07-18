@@ -17,15 +17,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
          <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
                 <MenuItem mnemonicParsing="false" text="New" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Open" />
+                  <MenuItem fx:id="saveButton" mnemonicParsing="false" text="Save" />
+                  <MenuItem fx:id="openButton" mnemonicParsing="false" text="Open" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
@@ -42,53 +42,29 @@
           <TitledPane animated="false" text="Main settings">
                <content>
                   <BorderPane>
-                     <top>
-                        <HBox BorderPane.alignment="CENTER">
-                           <children>
-                              <Label alignment="CENTER" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Source chat Id" HBox.hgrow="ALWAYS">
-                                 <graphic>
-                                    <TextField id="sourceChatIdTextField" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
-                                     </graphic>
-                              </Label>
-                              <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Target chat Id" HBox.hgrow="ALWAYS">
-                                 <graphic>
-                                    <TextField id="sourceChatIdTextField" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
-                                 </graphic>
-                              </Label>
-                              <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="181.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Logs chat Id (optional)" HBox.hgrow="ALWAYS">
-                                 <graphic>
-                                    <TextField id="sourceChatIdTextField" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
-                                 </graphic>
-                              </Label>
-                           </children>
-                           <BorderPane.margin>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </BorderPane.margin>
-                        </HBox>
-                     </top>
                      <center>
                         <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
                            <items>
-                              <ToggleButton contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Custom database config">
+                              <ToggleButton fx:id="dbSwitch" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Custom database config">
                                  <graphic>
                                     <VBox>
                                        <children>
-                                          <TextField promptText="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1">
+                                          <TextField fx:id="dbUrl" promptText="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <TextField promptText="org.h2.Driver">
+                                          <TextField fx:id="dbDriver" promptText="org.h2.Driver">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <TextField promptText="Username">
+                                          <TextField fx:id="dbUsername" promptText="Username">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <PasswordField promptText="Password">
+                                          <PasswordField fx:id="dbPassword" promptText="Password">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
@@ -100,26 +76,26 @@
                                     </VBox>
                                  </graphic>
                               </ToggleButton>
-                              <ToggleButton contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Proxy">
+                              <ToggleButton fx:id="proxySwitch" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Proxy">
                                  <graphic>
                                     <VBox>
                                        <children>
-                                          <TextField promptText="localhost">
+                                          <TextField fx:id="proxyHost" promptText="localhost">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <TextField promptText="1080">
+                                          <TextField fx:id="proxyPort" promptText="1080">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <TextField promptText="Username (optional)">
+                                          <TextField fx:id="proxyUsername" promptText="Username (optional)">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
                                           </TextField>
-                                          <PasswordField promptText="Password (optional)">
+                                          <PasswordField fx:id="proxyPassword" promptText="Password (optional)">
                                              <VBox.margin>
                                                 <Insets bottom="10.0" />
                                              </VBox.margin>
@@ -140,6 +116,45 @@
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
+                     <top>
+                        <VBox BorderPane.alignment="CENTER">
+                           <children>
+                              <HBox>
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Source chat Id" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextField fx:id="sourceChatId" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
+                                           </graphic>
+                                    </Label>
+                                    <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Target chat Id" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextField fx:id="targetChatId" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
+                                       </graphic>
+                                    </Label>
+                                    <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="181.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Logs chat Id (optional)" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextField fx:id="logsChatId" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Bot token">
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <TextField fx:id="botToken" alignment="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" promptText="123456789:ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghi" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </TextField>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </top>
                   </BorderPane>
                </content>
             </TitledPane>
