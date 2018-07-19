@@ -1,0 +1,19 @@
+TextField {
+    -fx-border-insets: -0.2, 1, -1.4, 3;
+    -fx-border-radius: 3, 2, 4, 0;
+}
+
+TextField.error {
+    -fx-border-color: red;
+    -fx-background-color: rgba(255, 192, 192, 0.1);
+}
+
+TextField.warning {
+    -fx-border-color: rgba(255, 168, 0, 0.5);
+    -fx-background-color: rgba(255, 168, 0, 0.05);
+}
+
+TextField.correct {
+    -fx-border-color: green;
+    -fx-background-color: rgba(192, 255, 192, 0.1);
+}

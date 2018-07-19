@@ -17,16 +17,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@textfields.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
          <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#onNew" text="New" />
-                  <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#onSave" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSave" text="Save" />
                   <MenuItem mnemonicParsing="false" onAction="#onSaveAs" text="Save as" />
-                  <MenuItem fx:id="openButton" mnemonicParsing="false" onAction="#onOpen" text="Open" />
+                  <MenuItem mnemonicParsing="false" onAction="#onOpen" text="Open" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
@@ -48,7 +48,7 @@
                            <items>
                               <ToggleButton fx:id="dbSwitch" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Custom database config">
                                  <graphic>
-                                    <VBox>
+                                    <VBox fx:id="dbContainer">
                                        <children>
                                           <TextField fx:id="dbUrl" promptText="jdbc:h2:mem:test;DB_CLOSE_DELAY=-1">
                                              <VBox.margin>
@@ -79,7 +79,7 @@
                               </ToggleButton>
                               <ToggleButton fx:id="proxySwitch" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Proxy">
                                  <graphic>
-                                    <VBox>
+                                    <VBox fx:id="proxyContainer">
                                        <children>
                                           <TextField fx:id="proxyHost" promptText="localhost">
                                              <VBox.margin>
@@ -124,7 +124,7 @@
                                  <children>
                                     <Label alignment="CENTER" contentDisplay="BOTTOM" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Source chat Id" HBox.hgrow="ALWAYS">
                                        <graphic>
-                                          <TextField fx:id="sourceChatId" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" />
+                                          <TextField fx:id="sourceChatId" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="-12345678901" styleClass="text-input" />
                                            </graphic>
                                     </Label>
                                     <Label alignment="CENTER" contentDisplay="BOTTOM" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Target chat Id" HBox.hgrow="ALWAYS">

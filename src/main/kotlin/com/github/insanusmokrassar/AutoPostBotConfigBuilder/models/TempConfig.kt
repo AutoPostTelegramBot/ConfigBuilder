@@ -35,7 +35,7 @@ class TempConfig (
         get() {
             return (sourceChatId != null && targetChatId != null && botToken != null) && let {
                 databaseConfig ?.let {
-                    databaseUrlRegex.matches(it.url) && databaseDriverClassnameRegex.matches(it.driver)
+                    databaseUrlRegex.matches(it.url ?: "") && databaseDriverClassnameRegex.matches(it.driver ?: "")
                 } ?: true
             } && let {
                 proxy ?.let {

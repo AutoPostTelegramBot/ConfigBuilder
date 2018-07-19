@@ -6,6 +6,7 @@ import com.github.insanusmokrassar.IObjectKRealisations.toObject
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import java.io.File
@@ -17,20 +18,53 @@ class GlobalConfigController : Initializable {
     private var file: File? = null
 
     @FXML private lateinit var sourceChatId: TextField
-    @FXML private lateinit var targetChatId: TextField
-    @FXML private lateinit var logsChatId: TextField
-    @FXML private lateinit var botToken: TextField
+    private val sourceChatIdValidator: TextFieldValidator<Long> by lazy {
+        ChatIdValidator(sourceChatId)
+    }
 
+    @FXML private lateinit var targetChatId: TextField
+    private val targetChatIdValidator: TextFieldValidator<Long> by lazy {
+        ChatIdValidator(targetChatId)
+    }
+
+    @FXML private lateinit var logsChatId: TextField
+    private val logsChatIdValidator: TextFieldValidator<Long> by lazy {
+        ChatIdValidator(logsChatId)
+    }
+
+    @FXML private lateinit var botToken: TextField
+    private val botTokenValidator: BotTokenValidator by lazy {
+        BotTokenValidator(botToken)
+    }
+
+    @FXML private lateinit var dbContainer: VBox
     @FXML private lateinit var dbSwitch: ToggleButton
     @FXML private lateinit var proxySwitch: ToggleButton
 
     @FXML private lateinit var dbUrl: TextField
+    private val databaseUrlValidator: TextValidator by lazy {
+        DatabaseUrlValidator(dbUrl)
+    }
+
     @FXML private lateinit var dbDriver: TextField
+    private val dbDriverValidator: TextValidator by lazy {
+        PackageValidator(dbDriver)
+    }
+
     @FXML private lateinit var dbUsername: TextField
     @FXML private lateinit var dbPassword: PasswordField
 
+    @FXML private lateinit var proxyContainer: VBox
     @FXML private lateinit var proxyHost: TextField
+    private val proxyUrlValidator: ProxyUrlValidator by lazy {
+        ProxyUrlValidator(proxyHost)
+    }
+
     @FXML private lateinit var proxyPort: TextField
+    private val portValidator: PortValidator by lazy {
+        PortValidator(proxyPort)
+    }
+
     @FXML private lateinit var proxyUsername: TextField
     @FXML private lateinit var proxyPassword: TextField
 
@@ -39,20 +73,14 @@ class GlobalConfigController : Initializable {
     private var config: TempConfig
         get() {
             return TempConfig(
-                sourceChatId.asLongOrNull(),
-                targetChatId.asLongOrNull(),
-                botToken.text.let {
-                    if (it.isEmpty()) {
-                        null
-                    } else {
-                        it
-                    }
-                },
-                logsChatId.asLongOrNull(),
+                sourceChatIdValidator.outputOrNull,
+                targetChatIdValidator.outputOrNull,
+                botTokenValidator.outputOrNull,
+                logsChatIdValidator.outputOrNull,
                 databaseConfig = if (dbSwitch.isSelected) {
                     DatabaseConfig(
-                        dbUrl.text,
-                        dbDriver.text,
+                        databaseUrlValidator.outputOrNull,
+                        dbDriverValidator.outputOrNull,
                         dbUsername.notEmptyTextOrNull(),
                         dbPassword.notEmptyTextOrNull()
                     )
@@ -61,8 +89,8 @@ class GlobalConfigController : Initializable {
                 },
                 proxy = if (proxySwitch.isSelected) {
                     ProxySettings(
-                        proxyHost.notEmptyTextOrNull(),
-                        proxyPort.asLongOrNull() ?.toInt(),
+                        proxyUrlValidator.outputOrNull,
+                        portValidator.outputOrNull,
                         proxyUsername.notEmptyTextOrNull(),
                         proxyPassword.notEmptyTextOrNull()
                     )
@@ -72,24 +100,56 @@ class GlobalConfigController : Initializable {
             )
         }
         set(value) {
-            sourceChatId.text = value.sourceChatId ?.toString() ?: ""
-            targetChatId.text = value.targetChatId ?.toString() ?: ""
-            logsChatId.text = value.logsChatId ?.toString() ?: ""
-            botToken.text = value.botToken ?: ""
+            value.apply {
+                sourceChatIdValidator.text = sourceChatId ?.toString() ?: ""
+                targetChatIdValidator.text = targetChatId ?.toString() ?: ""
+                logsChatIdValidator.text = logsChatId ?.toString() ?: ""
+                botTokenValidator.text = botToken ?: ""
 
-            dbUrl.text = value.databaseConfig ?.url ?: ""
-            dbDriver.text = value.databaseConfig ?.driver ?: ""
-            dbUsername.text = value.databaseConfig ?.username ?: ""
-            dbPassword.text = value.databaseConfig ?.password ?: ""
+                databaseConfig ?.apply {
+                    dbSwitch.selectedProperty().value = true
+                    databaseUrlValidator.text = url ?: ""
+                    dbDriverValidator.text = driver ?: ""
+                    dbUsername.text = username ?: ""
+                    dbPassword.text = password ?: ""
+                } ?:apply {
+                    dbSwitch.selectedProperty().value = false
+                    databaseUrlValidator.text = ""
+                    dbDriverValidator.text = ""
+                    dbUsername.text = ""
+                    dbPassword.text = ""
+                }
 
-            proxyHost.text = value.proxy ?.host ?: ""
-            proxyPort.text = value.proxy ?.port ?.toString() ?: ""
-            proxyUsername.text = value.proxy ?.username ?: ""
-            proxyPassword.text = value.proxy ?.password ?: ""
+                proxy ?.apply {
+                    proxySwitch.selectedProperty().value = true
+                    proxyUrlValidator.text = host ?: ""
+                    portValidator.text = port ?.toString() ?: ""
+                    proxyUsername.text = username ?: ""
+                    proxyPassword.text = password ?: ""
+                } ?:apply {
+                    proxySwitch.selectedProperty().value = false
+                    proxyUrlValidator.text = ""
+                    portValidator.text = ""
+                    proxyUsername.text = ""
+                    proxyPassword.text = ""
+                }
+
+            }
         }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("Initialized")
+
+        TogglButtonEnabler(
+            dbSwitch,
+            dbContainer.disableProperty()
+        )
+
+        TogglButtonEnabler(
+            proxySwitch,
+            proxyContainer.disableProperty()
+        )
+
         onNew()
     }
 
