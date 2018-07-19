@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -21,14 +17,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.GlobalConfigController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
          <menus>
             <Menu mnemonicParsing="false" text="File">
               <items>
-                <MenuItem mnemonicParsing="false" text="New" />
+                <MenuItem mnemonicParsing="false" onAction="#onNew" text="New" />
                   <MenuItem fx:id="saveButton" mnemonicParsing="false" onAction="#onSave" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveAs" text="Save as" />
                   <MenuItem fx:id="openButton" mnemonicParsing="false" onAction="#onOpen" text="Open" />
               </items>
             </Menu>

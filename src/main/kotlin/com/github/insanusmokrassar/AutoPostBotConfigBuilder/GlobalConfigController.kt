@@ -1,23 +1,20 @@
 package com.github.insanusmokrassar.AutoPostBotConfigBuilder
 
-import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.Config
-import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.DatabaseConfig
-import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.ProxySettings
+import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.*
 import com.github.insanusmokrassar.IObjectKRealisations.toJson
 import com.github.insanusmokrassar.IObjectKRealisations.toObject
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import java.io.File
 import java.net.URL
 import java.util.*
 
 class GlobalConfigController : Initializable {
 
-    @FXML private lateinit var openButton: MenuItem
-    @FXML private lateinit var saveButton: MenuItem
+    private var file: File? = null
 
     @FXML private lateinit var sourceChatId: TextField
     @FXML private lateinit var targetChatId: TextField
@@ -39,57 +36,61 @@ class GlobalConfigController : Initializable {
 
     lateinit var stage: Stage
 
-    private var config: Config
+    private var config: TempConfig
         get() {
-            return Config(
-                    readLongField(sourceChatId),
-                    readLongField(targetChatId),
-                    botToken.text,
-                    readLongField(logsChatId),
-                    databaseConfig = DatabaseConfig(
-                            dbUrl.text,
-                            dbDriver.text,
-                            dbUsername.text,
-                            dbPassword.text
-                    ),
-                    proxy = ProxySettings(
-                            proxyHost.text,
-                            readIntField(proxyPort),
-                            proxyUsername.text,
-                            proxyPassword.text
+            return TempConfig(
+                sourceChatId.asLongOrNull(),
+                targetChatId.asLongOrNull(),
+                botToken.text.let {
+                    if (it.isEmpty()) {
+                        null
+                    } else {
+                        it
+                    }
+                },
+                logsChatId.asLongOrNull(),
+                databaseConfig = if (dbSwitch.isSelected) {
+                    DatabaseConfig(
+                        dbUrl.text,
+                        dbDriver.text,
+                        dbUsername.notEmptyTextOrNull(),
+                        dbPassword.notEmptyTextOrNull()
                     )
-
+                } else {
+                    null
+                },
+                proxy = if (proxySwitch.isSelected) {
+                    ProxySettings(
+                        proxyHost.notEmptyTextOrNull(),
+                        proxyPort.asLongOrNull() ?.toInt(),
+                        proxyUsername.notEmptyTextOrNull(),
+                        proxyPassword.notEmptyTextOrNull()
+                    )
+                } else {
+                    null
+                }
             )
         }
         set(value) {
-            try {
-                sourceChatId.text = value.sourceChatId.toString()
-                targetChatId.text = value.targetChatId.toString()
-                logsChatId.text = value.logsChatId.toString()
-                botToken.text = value.botToken
+            sourceChatId.text = value.sourceChatId ?.toString() ?: ""
+            targetChatId.text = value.targetChatId ?.toString() ?: ""
+            logsChatId.text = value.logsChatId ?.toString() ?: ""
+            botToken.text = value.botToken ?: ""
 
-                dbUrl.text = value.databaseConfig?.url
-                dbDriver.text = value.databaseConfig?.driver
-                dbUsername.text = value.databaseConfig?.username
-                dbPassword.text = value.databaseConfig?.password
+            dbUrl.text = value.databaseConfig ?.url ?: ""
+            dbDriver.text = value.databaseConfig ?.driver ?: ""
+            dbUsername.text = value.databaseConfig ?.username ?: ""
+            dbPassword.text = value.databaseConfig ?.password ?: ""
 
-                proxyHost.text = value.proxy?.host
-                proxyPort.text = value.proxy?.port.toString()
-                proxyUsername.text = value.proxy?.username
-                proxyPassword.text = value.proxy?.password
-            }
-            catch (e: Exception) {
-
-            }
+            proxyHost.text = value.proxy ?.host ?: ""
+            proxyPort.text = value.proxy ?.port ?.toString() ?: ""
+            proxyUsername.text = value.proxy ?.username ?: ""
+            proxyPassword.text = value.proxy ?.password ?: ""
         }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("Initialized")
-        config = Config(
-                0,
-                0,
-                ""
-        )
+        onNew()
     }
 
     @FXML
@@ -98,45 +99,34 @@ class GlobalConfigController : Initializable {
         filechooser.title = "Open configuration file"
         val file = filechooser.showOpenDialog(stage)
         val content = file?.readText()
-        config = if(content != null) {
-            content.toObject(Config::class.java)
-        } else {
-            Config(
-                    0,
-                    0,
-                    ""
-            )
-            //throw Exception()
-        }
+        config = content ?.toObject(TempConfig::class.java) ?: TempConfig()
     }
 
     @FXML
     private fun onSave() {
-        val c = config
+        if (!config.isValid) {
+            return
+        }
+        file ?.let {
+            val c = config.asConfig ?: return
+            it.writeText(c.toJson())
+        } ?: onSaveAs()
+    }
+
+    @FXML
+    private fun onSaveAs() {
+        if (!config.isValid) {
+            return
+        }
+        file = null
         val fileChooser = FileChooser()
         fileChooser.title = "Save configuration file"
-        val file = fileChooser.showSaveDialog(stage)
-        file.writeText(c.toJson())
+        file = fileChooser.showSaveDialog(stage) ?: return
+        onSave()
     }
 
-    private fun readLongField(field: TextField) {
-        try {
-            val result = field.text.toLong()
-            return result
-        }
-        catch (e: Exception) {
-
-        }
+    @FXML
+    private fun onNew() {
+        config = TempConfig()
     }
-
-    private fun readIntField(field: TextField) {
-        try {
-            val result = field.text.toInt()
-            return result
-        }
-        catch (e: Exception) {
-
-        }
-    }
-
 }
