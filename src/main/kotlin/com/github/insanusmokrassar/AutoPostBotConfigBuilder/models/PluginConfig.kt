@@ -4,5 +4,5 @@ import com.github.insanusmokrassar.IObjectK.interfaces.IObject
 
 class PluginConfig(
     val classname: String? = null,
-    val params: IObject<Any>?
+    val params: IObject<Any>? = null
 )

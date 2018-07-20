@@ -13,8 +13,8 @@ class Config (
 )
 
 data class DatabaseConfig(
-    val url: String,
-    val driver: String,
-    val username: String,
-    val password: String
+    val url: String?,
+    val driver: String?,
+    val username: String?,
+    val password: String?
 )
