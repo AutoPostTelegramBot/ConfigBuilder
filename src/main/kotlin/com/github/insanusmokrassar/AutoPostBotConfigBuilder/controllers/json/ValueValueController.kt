@@ -13,6 +13,9 @@ import java.util.*
 class ValueValueController : ValueController<String> {
     @FXML private lateinit var valueField: TextField
 
-    override val value: String
+    override var value: String
         get() = valueField.text
+        set(value) {
+            valueField.text = value
+        }
 }

@@ -7,12 +7,18 @@ import javafx.scene.control.TextField
 class KeyValueController : KeyValueWrapperController<String> {
 
     @FXML private lateinit var key: TextField
-    @FXML private lateinit var valueValueController: ValueValueController
+    @FXML private lateinit var valueController: ValueValueController
 
-    override val outKey: String
+    override var outKey: String
         get() = key.text
-    override val outValue: String
-        get() = valueValueController.value
+        set(value) {
+            key.text = value
+        }
+    override var outValue: String
+        get() = valueController.value
+        set(value) {
+            valueController.value = value
+        }
     override var onRemoveCallback: () -> Unit = {}
 
     @FXML

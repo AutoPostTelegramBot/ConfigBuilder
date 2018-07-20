@@ -92,7 +92,7 @@ open class TextValidator(
 
 private val chatIdRegex = Regex("^-?\\d{1,16}$")
 
-class ChatIdValidator(
+open class ChatIdValidator(
     textField: TextField
 ) : RegexValidator<Long>(
     textField,
@@ -101,6 +101,16 @@ class ChatIdValidator(
 ) {
     override val convert: Long?
         get() = text.toLongOrNull()
+}
+
+class LogsChatIdValidator(
+    textField: TextField
+) : ChatIdValidator(
+    textField
+) {
+    override fun isValid(text: String): Boolean {
+        return super.isValid(text) || text.isEmpty()
+    }
 }
 
 private val botTokenRegex = Regex("^\\d+:[\\w\\-\\d]{31,}$")
@@ -130,16 +140,25 @@ class PackageValidator(
     packageRegex
 )
 
-private val proxyUrlRegex = Regex("^(https|http|socks)?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$")
+private val proxyUrlRegex = Regex("^(https|http|socks)?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$|^\$")
 
 class ProxyUrlValidator(
     textField: TextField
 ) : TextValidator(
     textField,
     proxyUrlRegex
-)
+) {
+    override val outputOrNull: String?
+        get() = super.outputOrNull ?.let {
+            if (it.isEmpty()) {
+                null
+            } else {
+                it
+            }
+        }
+}
 
-private val portRegex = Regex("^\\d{1,5}$")
+private val portRegex = Regex("^\\d{0,5}$|^$")
 
 class PortValidator(
     textField: TextField
@@ -152,7 +171,11 @@ class PortValidator(
         get() = text.toIntOrNull()
 
     override fun isValid(text: String): Boolean {
-        return super.isValid(text) && text.toIntOrNull() in 1 .. 65535
+        return super.isValid(text) && if (text.isNotEmpty()) {
+            text.toIntOrNull() in 1 .. 65535
+        } else {
+            true
+        }
     }
 }
 

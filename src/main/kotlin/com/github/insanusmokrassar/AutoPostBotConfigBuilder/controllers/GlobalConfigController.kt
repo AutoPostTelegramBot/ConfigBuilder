@@ -2,8 +2,7 @@ package com.github.insanusmokrassar.AutoPostBotConfigBuilder.controllers
 
 import com.github.insanusmokrassar.AutoPostBotConfigBuilder.*
 import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.*
-import com.github.insanusmokrassar.IObjectKRealisations.toJson
-import com.github.insanusmokrassar.IObjectKRealisations.toObject
+import com.github.insanusmokrassar.IObjectKRealisations.*
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
@@ -14,9 +13,25 @@ import java.io.File
 import java.net.URL
 import java.util.*
 
+private fun titleFormat(filePath: String?): String = "ConfigBuilder - ${filePath ?: "new file"}"
+
 class GlobalConfigController : Initializable {
+    var stage: Stage? = null
+        set(value) {
+            field = value
+            value ?.let {
+                it.title = titleFormat(file ?. path)
+            }
+
+        }
 
     private var file: File? = null
+        set(value) {
+            field = value
+            stage ?.let {
+                it.title = titleFormat(value ?. path)
+            }
+        }
 
     @FXML private lateinit var sourceChatId: TextField
     private val sourceChatIdValidator: TextFieldValidator<Long> by lazy {
@@ -30,7 +45,7 @@ class GlobalConfigController : Initializable {
 
     @FXML private lateinit var logsChatId: TextField
     private val logsChatIdValidator: TextFieldValidator<Long> by lazy {
-        ChatIdValidator(logsChatId)
+        LogsChatIdValidator(logsChatId)
     }
 
     @FXML private lateinit var botToken: TextField
@@ -69,7 +84,7 @@ class GlobalConfigController : Initializable {
     @FXML private lateinit var proxyUsername: TextField
     @FXML private lateinit var proxyPassword: TextField
 
-    lateinit var stage: Stage
+    @FXML private lateinit var pluginManagerController: PluginsManagerController
 
     private var config: TempConfig
         get() {
@@ -78,7 +93,7 @@ class GlobalConfigController : Initializable {
                 targetChatIdValidator.outputOrNull,
                 botTokenValidator.outputOrNull,
                 logsChatIdValidator.outputOrNull,
-                databaseConfig = if (dbSwitch.isSelected) {
+                if (dbSwitch.isSelected) {
                     DatabaseConfig(
                         databaseUrlValidator.outputOrNull,
                         dbDriverValidator.outputOrNull,
@@ -88,7 +103,7 @@ class GlobalConfigController : Initializable {
                 } else {
                     null
                 },
-                proxy = if (proxySwitch.isSelected) {
+                if (proxySwitch.isSelected) {
                     ProxySettings(
                         proxyUrlValidator.outputOrNull,
                         portValidator.outputOrNull,
@@ -97,7 +112,8 @@ class GlobalConfigController : Initializable {
                     )
                 } else {
                     null
-                }
+                },
+                pluginManagerController.plugins
             )
         }
         set(value) {
@@ -135,6 +151,7 @@ class GlobalConfigController : Initializable {
                     proxyPassword.text = ""
                 }
 
+                pluginManagerController.plugins = plugins
             }
         }
 
@@ -158,36 +175,39 @@ class GlobalConfigController : Initializable {
     private fun onOpen() {
         val filechooser = FileChooser()
         filechooser.title = "Open configuration file"
-        val file = filechooser.showOpenDialog(stage)
-        val content = file?.readText()
+        file = filechooser.showOpenDialog(stage)
+        val content = file ?.readText()
         config = content ?.toObject(TempConfig::class.java) ?: TempConfig()
     }
 
     @FXML
     private fun onSave() {
-        if (!config.isValid) {
-            return
+        config.asConfig ?.also {
+            saveConfig(it)
         }
-        file ?.let {
-            val c = config.asConfig ?: return
-            it.writeText(c.toJson())
-        } ?: onSaveAs()
     }
 
     @FXML
     private fun onSaveAs() {
-        if (!config.isValid) {
-            return
+        config.asConfig ?.also {
+            file = null
+            saveConfig(it)
         }
-        file = null
-        val fileChooser = FileChooser()
-        fileChooser.title = "Save configuration file"
-        file = fileChooser.showSaveDialog(stage) ?: return
-        onSave()
+    }
+
+    private fun saveConfig(config: Config) {
+        file ?.also {
+            it.writeText(config.toJson())
+        } ?:also {
+            val fileChooser = FileChooser()
+            file = fileChooser.showSaveDialog(stage) ?: return
+            saveConfig(config)
+        }
     }
 
     @FXML
     private fun onNew() {
+        file = null
         config = TempConfig()
     }
 }

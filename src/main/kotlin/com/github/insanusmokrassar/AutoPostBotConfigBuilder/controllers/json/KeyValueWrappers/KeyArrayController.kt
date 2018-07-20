@@ -10,10 +10,16 @@ class KeyArrayController : KeyValueWrapperController<List<Any>> {
     @FXML private lateinit var key: TextField
     @FXML private lateinit var valueController: ValueArrayController
 
-    override val outKey: String
+    override var outKey: String
         get() = key.text
-    override val outValue: List<Any>
+        set(value) {
+            key.text = value
+        }
+    override var outValue: List<Any>
         get() = valueController.value
+        set(value) {
+            valueController.value = value
+        }
     override var onRemoveCallback: () -> Unit = {}
 
     @FXML

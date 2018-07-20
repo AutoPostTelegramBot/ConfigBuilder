@@ -15,32 +15,15 @@ class TempConfig (
 ) {
     val asConfig: Config?
         get() {
-            return if (isValid) {
-                Config(
-                    targetChatId ?: return null,
-                    sourceChatId ?: return null,
-                    botToken ?: return null,
-                    logsChatId ?: sourceChatId,
-                    databaseConfig,
-                    proxy,
-                    plugins,
-                    debug
-                )
-            } else {
-                null
-            }
-        }
-
-    val isValid: Boolean
-        get() {
-            return (sourceChatId != null && targetChatId != null && botToken != null) && let {
-                databaseConfig ?.let {
-                    databaseUrlRegex.matches(it.url ?: "") && databaseDriverClassnameRegex.matches(it.driver ?: "")
-                } ?: true
-            } && let {
-                proxy ?.let {
-                    it.port in 1 .. 65535
-                } ?: true
-            }
+            return Config(
+                targetChatId ?: return null,
+                sourceChatId ?: return null,
+                botToken ?: return null,
+                logsChatId ?: sourceChatId,
+                databaseConfig,
+                proxy,
+                plugins,
+                debug
+            )
         }
 }

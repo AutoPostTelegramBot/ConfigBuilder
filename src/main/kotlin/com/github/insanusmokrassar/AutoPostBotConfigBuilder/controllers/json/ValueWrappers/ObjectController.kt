@@ -9,8 +9,11 @@ import javafx.scene.control.TextField
 class ObjectController : ValueWrapperController<IObject<Any>> {
     @FXML private lateinit var valueObjectController: ValueObjectController
 
-    override val outValue: IObject<Any>
+    override var outValue: IObject<Any>
         get() = valueObjectController.value
+        set(value) {
+            valueObjectController.value = value
+        }
     override var onRemoveCallback: () -> Unit = {}
 
     @FXML

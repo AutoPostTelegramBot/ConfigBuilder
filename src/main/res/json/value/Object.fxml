@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <HBox alignment="CENTER_LEFT" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.controllers.json.ValueWrappers.ObjectController">
+      fx:controller="com.github.insanusmokrassar.AutoPostBotConfigBuilder.controllers.json.ValueWrappers.ObjectController"
+      styleClass="bordered">
 
     <Button onAction="#remove" text="-">
         <HBox.margin>
