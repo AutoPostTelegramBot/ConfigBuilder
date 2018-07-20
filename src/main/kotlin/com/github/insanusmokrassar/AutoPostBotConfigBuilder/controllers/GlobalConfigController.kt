@@ -1,5 +1,6 @@
-package com.github.insanusmokrassar.AutoPostBotConfigBuilder
+package com.github.insanusmokrassar.AutoPostBotConfigBuilder.controllers
 
+import com.github.insanusmokrassar.AutoPostBotConfigBuilder.*
 import com.github.insanusmokrassar.AutoPostBotConfigBuilder.models.*
 import com.github.insanusmokrassar.IObjectKRealisations.toJson
 import com.github.insanusmokrassar.IObjectKRealisations.toObject
