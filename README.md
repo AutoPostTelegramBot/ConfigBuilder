@@ -1,8 +1,6 @@
 # ConfigBuilder
 
-Jenkins build [here](http://insanusmokrassar.com:58080/view/AutoPostTelegramBot/job/AutoPostConfigBuilder_master__release/)
-
-[Direct download link](http://insanusmokrassar.com:58080/view/AutoPostTelegramBot/job/AutoPostConfigBuilder_master__release/lastSuccessfulBuild/artifact/target/AutoPostBotConfigBuilder-1.0-jar-with-dependencies.jar)
+Look at the releases to get direct link to download
 
 ## How to run?
 
