@@ -87,6 +87,7 @@
                     <args>
                         <arg>-Xcoroutines=enable</arg>
                     </args>
+                    <jvmTarget>1.8</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -200,12 +201,6 @@
             <artifactId>kotlinx-coroutines-core</artifactId>
             <version>${kotlin.coroutines.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.github.insanusmokrassar</groupId>
@@ -216,6 +211,12 @@
             <groupId>com.github.insanusmokrassar</groupId>
             <artifactId>IObjectKRealisations</artifactId>
             <version>1.11.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>no.tornado</groupId>
+            <artifactId>tornadofx</artifactId>
+            <version>1.7.17</version>
         </dependency>
     </dependencies>
 </project>

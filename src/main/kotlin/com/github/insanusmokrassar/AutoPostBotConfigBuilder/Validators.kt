@@ -1,6 +1,8 @@
 package com.github.insanusmokrassar.AutoPostBotConfigBuilder
 
+import javafx.beans.value.ObservableValue
 import javafx.scene.control.TextField
+import tornadofx.*
 
 interface TextFieldValidator<T> {
     val textField: TextField
@@ -18,14 +20,14 @@ interface TextFieldValidator<T> {
     fun isValid(text: String): Boolean
 }
 
-private const val errorClass = "error"
-private const val warningClass = "warning"
-private const val correctClass = "correct"
+const val errorClass = "error"
+const val warningClass = "warning"
+const val correctClass = "correct"
 
 abstract class RegexValidator<T>(
     override val textField: TextField,
-    private val regex: Regex = Regex(".*"),
-    private val includeWarning: Boolean = false
+    val regex: Regex = Regex(".*"),
+    val includeWarning: Boolean = false
 ) : TextFieldValidator<T> {
     protected abstract val convert: T?
     override fun isValid(text: String): Boolean {
@@ -58,7 +60,7 @@ abstract class RegexValidator<T>(
         }
     }
 
-    private fun refreshCorrectness(value: String) {
+    fun refreshCorrectness(value: String) {
         if (isValid(value)) {
             changeCorrectnessState(correctClass)
         } else {
@@ -66,7 +68,7 @@ abstract class RegexValidator<T>(
         }
     }
 
-    private fun changeCorrectnessState(newValue: String?) {
+    fun changeCorrectnessState(newValue: String?) {
         textField.styleClass.apply {
             remove(errorClass)
             remove(warningClass)
@@ -90,7 +92,88 @@ open class TextValidator(
         get() = text
 }
 
+typealias ValueChangedValidator = ValidationContext.(String?) -> ValidationMessage?
+
 private val chatIdRegex = Regex("^-?\\d{1,16}$")
+private val botTokenRegex = Regex("^\\d+:[\\w\\-\\d]{31,}$")
+private val dbUrlRegex = Regex("^(jdbc:[\\w\\d]+:([^;]*;?)*)?$")
+private val packageRegex = Regex("^[A-Za-z\\d]+(\\.[A-Za-z\\d]+)*$")
+private val portRegex = Regex("^\\d{0,5}$|^$")
+private val proxyUrlRegex = Regex("^((https|http|socks)://)?[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$|^\$")
+
+private fun getRegexValidator(
+    regex: Regex,
+    errorMessage: String? = "Incorrect"
+): ValueChangedValidator {
+    return {
+        if (it != null) {
+            if (regex.matches(it)) {
+                success()
+            } else {
+                error(errorMessage)
+            }
+        } else {
+            null
+        }
+    }
+}
+
+private fun getRegexOrPropertyValidator(
+    regex: Regex,
+    property: ObservableValue<Boolean>?,
+    errorMessage: String? = "Incorrect"
+): ValueChangedValidator {
+    val regexValidator = getRegexValidator(regex, errorMessage)
+    property ?.also {
+        _ ->
+        return {
+            if (property.value != true) {
+                null
+            } else {
+                regexValidator(it)
+            }
+        }
+    }
+    return regexValidator
+}
+
+val chatIdValidator: ValueChangedValidator = getRegexValidator(chatIdRegex, "Chat id is incorrect")
+
+val botTokenValidator: ValueChangedValidator = getRegexValidator(botTokenRegex, "Bot token is incorrect")
+
+fun getDBUrlValidator(enabledProperty: ObservableValue<Boolean>): ValueChangedValidator {
+    return getRegexOrPropertyValidator(
+        dbUrlRegex,
+        enabledProperty,
+        "DB URL is incorrect"
+    )
+}
+
+fun getPackageValidator(enabledProperty: ObservableValue<Boolean>? = null): ValueChangedValidator {
+    return getRegexOrPropertyValidator(
+        packageRegex,
+        enabledProperty,
+        "Package is incorrect"
+    )
+}
+
+fun getProxyUrlValidator(enabledProperty: ObservableValue<Boolean>? = null): ValueChangedValidator {
+    return getRegexOrPropertyValidator(
+        proxyUrlRegex,
+        enabledProperty,
+        "Proxy url is incorrect"
+    )
+}
+
+fun getProxyPortValidator(enabledProperty: ObservableValue<Boolean>? = null): ValueChangedValidator {
+    return getRegexOrPropertyValidator(
+        portRegex,
+        enabledProperty,
+        "Port of proxy is incorrect"
+    )
+}
+
+// --------------------------------------------------------------
 
 open class ChatIdValidator(
     textField: TextField
@@ -113,8 +196,6 @@ class LogsChatIdValidator(
     }
 }
 
-private val botTokenRegex = Regex("^\\d+:[\\w\\-\\d]{31,}$")
-
 class BotTokenValidator(
     textField: TextField
 ) : TextValidator(
@@ -122,7 +203,6 @@ class BotTokenValidator(
     botTokenRegex
 )
 
-private val dbUrlRegex = Regex("^jdbc:[\\w\\d]+:([^;]*;?)*$")
 
 class DatabaseUrlValidator(
     textField: TextField
@@ -131,7 +211,6 @@ class DatabaseUrlValidator(
     dbUrlRegex
 )
 
-private val packageRegex = Regex("^[A-Za-z\\d]+(\\.[A-Za-z\\d]+)*$")
 
 class PackageValidator(
     textField: TextField
@@ -139,8 +218,6 @@ class PackageValidator(
     textField,
     packageRegex
 )
-
-private val proxyUrlRegex = Regex("^(https|http|socks)?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]$|^\$")
 
 class ProxyUrlValidator(
     textField: TextField
@@ -158,7 +235,6 @@ class ProxyUrlValidator(
         }
 }
 
-private val portRegex = Regex("^\\d{0,5}$|^$")
 
 class PortValidator(
     textField: TextField
